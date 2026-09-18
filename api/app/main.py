@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from app.core.config import settings
 from app.db.session import init_db
-
+import app.models
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

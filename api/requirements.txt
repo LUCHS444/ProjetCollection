@@ -1,7 +1,6 @@
 fastapi
 uvicorn[standard]
 sqlmodel
-aiosqlite
 python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
@@ -9,3 +8,4 @@ python-dotenv
 pydantic[email]
 pydantic-settings
 bcrypt==4.0.1
+asyncpg

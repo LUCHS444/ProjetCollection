@@ -5,6 +5,7 @@ import "./index.css";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CollectionProvider } from "./contexts/CollectionContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import LoginPage from "./pages/LoginPage";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -17,7 +18,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/stats" element={<div>Page stats (à venir)</div>} />
             </Route>
             <Route path="/" element={<div>Page catalogue (à venir)</div>} />
-            <Route path="/login" element={<div>Page login (à venir)</div>} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </CollectionProvider>
       </AuthProvider>

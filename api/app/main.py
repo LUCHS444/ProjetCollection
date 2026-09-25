@@ -1,14 +1,14 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-from app.routers import auth, items
-from fastapi import Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import HTTPException as FastAPIHTTPException
+from contextlib import asynccontextmanager
 
+from app.routers import auth, items, collection
 from app.core.config import settings
 from app.db.session import init_db
 import app.models
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -26,6 +26,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.exception_handler(FastAPIHTTPException)
 async def custom_http_exception_handler(request: Request, exc: FastAPIHTTPException):
     return JSONResponse(
@@ -33,5 +34,7 @@ async def custom_http_exception_handler(request: Request, exc: FastAPIHTTPExcept
         content={"erreur": {"code": exc.status_code, "message": exc.detail}},
     )
 
+
 app.include_router(auth.router)
 app.include_router(items.router)
+app.include_router(collection.router)

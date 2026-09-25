@@ -9,6 +9,8 @@ from app.models.item import Item
 from app.models.user import User
 from app.schemas.entry import EntryCreate, EntryUpdate, EntryRead, StatsRead
 from app.dependencies.auth import get_current_user
+from sqlmodel import select
+from sqlalchemy.orm import selectinload
 
 router = APIRouter(prefix="/me", tags=["Collection personnelle"])
 
@@ -20,7 +22,11 @@ async def list_my_collection(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
-    statement = select(Entry).where(Entry.user_id == current_user.id)
+    statement = (
+        select(Entry)
+        .where(Entry.user_id == current_user.id)
+        .options(selectinload(Entry.item))
+    )
 
     if statut:
         statement = statement.where(Entry.statut == statut)

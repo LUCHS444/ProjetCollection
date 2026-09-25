@@ -1,10 +1,26 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./index.css";
+import { AuthProvider } from "./contexts/AuthContext";
+import { CollectionProvider } from "./contexts/CollectionContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
-)
+    <BrowserRouter>
+      <AuthProvider>
+        <CollectionProvider>
+          <Routes>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/collection" element={<div>Page collection (à venir)</div>} />
+              <Route path="/stats" element={<div>Page stats (à venir)</div>} />
+            </Route>
+            <Route path="/" element={<div>Page catalogue (à venir)</div>} />
+            <Route path="/login" element={<div>Page login (à venir)</div>} />
+          </Routes>
+        </CollectionProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  </StrictMode>
+);

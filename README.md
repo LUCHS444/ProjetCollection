@@ -13,6 +13,13 @@ Application complète (API + Web) permettant de parcourir un catalogue de recett
 
 ## Installation et lancement complet
 
+### 0. Node.js (si non installé nativement dans votre environnement Linux/WSL)
+\`\`\`bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+source ~/.bashrc
+nvm install --lts
+\`\`\`
+
 ### 1. Base de données PostgreSQL
 
 ```bash

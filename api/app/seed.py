@@ -1,6 +1,7 @@
 import asyncio
 import random
 
+from urllib.parse import quote
 from sqlmodel import select
 
 from app.db.session import async_session_maker, init_db
@@ -56,23 +57,28 @@ RECETTES = [
     {"titre": "Limonade maison", "categorie": "Boissons", "description": "Citrons pressés, sucre et eau pétillante.", "temps_preparation": 10, "difficulte": "facile", "type_plat": "boisson"},
 ]
 
+for r in RECETTES:
+    r["image_url"] = f"https://placehold.co/500x350/f0e6d2/2b2622?text={quote(r['titre'])}"
+
 
 async def seed():
     await init_db()
     async with async_session_maker() as session:
-        result = await session.exec(select(Item.titre))
-        existing_titles = set(result.all())
+        result = await session.exec(select(Item))
+        existants = {item.titre: item for item in result.all()}
 
-        nouveaux = [Item(**r) for r in RECETTES if r["titre"] not in existing_titles]
+        nouveaux = 0
+        mis_a_jour = 0
+        for r in RECETTES:
+            if r["titre"] in existants:
+                item = existants[r["titre"]]
+                if item.image_url != r["image_url"]:
+                    item.image_url = r["image_url"]
+                    session.add(item)
+                    mis_a_jour += 1
+            else:
+                session.add(Item(**r))
+                nouveaux += 1
 
-        if not nouveaux:
-            print("Aucune nouvelle recette à ajouter, la base est déjà peuplée.")
-            return
-
-        session.add_all(nouveaux)
         await session.commit()
-        print(f"{len(nouveaux)} recette(s) ajoutée(s). Total dans le fichier : {len(RECETTES)}.")
-
-
-if __name__ == "__main__":
-    asyncio.run(seed())
+        print(f"{nouveaux} recette(s) ajoutée(s), {mis_a_jour} image(s) mise(s) à jour.")

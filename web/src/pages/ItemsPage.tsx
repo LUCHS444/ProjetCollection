@@ -95,6 +95,7 @@ function ItemsPage() {
           <div className="items-grid">
             {data.results.map((item) => (
               <Link key={item.id} to={`/items/${item.id}`} className="item-card">
+                {item.image_url && <img src={item.image_url} alt={item.titre} />}
                 <h3>{item.titre}</h3>
                 <p>{item.categorie}</p>
                 <p>{item.temps_preparation} min · {item.difficulte}</p>

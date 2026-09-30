@@ -69,6 +69,9 @@ function ItemDetailPage() {
     <div className="item-detail-page">
       <Link to="/">← Retour au catalogue</Link>
       <h1>{item.titre}</h1>
+      {item.image_url && (
+        <img src={item.image_url} alt={item.titre} className="item-detail-image" />
+      )}
       <p className="categorie">{item.categorie}</p>
       <p>{item.description}</p>
       <ul className="item-meta">

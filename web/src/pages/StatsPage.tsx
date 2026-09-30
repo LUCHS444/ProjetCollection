@@ -2,11 +2,15 @@ import { useEffect } from "react";
 import { useCollection } from "../contexts/CollectionContext";
 
 function StatsPage() {
-  const { stats, fetchStats } = useCollection();
+  const { stats, erreur, fetchStats } = useCollection();
 
   useEffect(() => {
     fetchStats();
   }, [fetchStats]);
+
+  if (erreur && !stats) {
+    return <p className="erreur">{erreur}</p>;
+  }
 
   if (!stats) {
     return <p>Chargement...</p>;

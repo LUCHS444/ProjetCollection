@@ -302,3 +302,33 @@ select {
   padding: 0.6em 1em;
   margin-bottom: 0.5em;
 }
+.item-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+.item-card img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  display: block;
+}
+.item-card h3,
+.item-card p {
+  padding: 0 1.1em;
+}
+.item-card h3 {
+  margin-top: 0.7em;
+}
+.item-card p:last-child {
+  padding-bottom: 1em;
+}
+
+.item-detail-image {
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  margin-bottom: 1em;
+}

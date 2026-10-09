@@ -82,3 +82,7 @@ async def seed():
 
         await session.commit()
         print(f"{nouveaux} recette(s) ajoutée(s), {mis_a_jour} image(s) mise(s) à jour.")
+
+        
+if __name__ == "__main__":
+    asyncio.run(seed())

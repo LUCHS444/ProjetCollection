@@ -8,6 +8,8 @@ from app.routers import auth, items, collection
 from app.core.config import settings
 from app.db.session import init_db
 import app.models
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 
 @asynccontextmanager
@@ -27,11 +29,22 @@ app.add_middleware(
 )
 
 
-@app.exception_handler(FastAPIHTTPException)
-async def custom_http_exception_handler(request: Request, exc: FastAPIHTTPException):
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
     return JSONResponse(
         status_code=exc.status_code,
-        content={"erreur": {"code": exc.status_code, "message": exc.detail}},
+        content={"erreur": {"code": exc.status_code, "message": str(exc.detail)}},
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    details = "; ".join(
+        f"{'.'.join(str(p) for p in e['loc'][1:])} : {e['msg']}" for e in exc.errors()
+    )
+    return JSONResponse(
+        status_code=422,
+        content={"erreur": {"code": 422, "message": f"Données invalides ({details})"}},
     )
 
 

@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
-import { http } from "../services/http";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { http, ApiError } from "../services/http";
 import type { UserRead, Token, UserLogin, UserCreate } from "../types/api";
 
 interface AuthContextValue {
@@ -19,13 +19,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
   const [user, setUser] = useState<UserRead | null>(null);
 
+  // Vérifie le token auprès de l'API : charge l'utilisateur, ou déconnecte si le token est refusé
+  useEffect(() => {
+    if (!token) {
+      return;
+    }
+    let annule = false;
+
+    http
+      .get<UserRead>("/auth/me")
+      .then((me) => {
+        if (!annule) {
+          setUser(me);
+        }
+      })
+      .catch((err: unknown) => {
+        if (!annule && err instanceof ApiError && err.code === 401) {
+          localStorage.removeItem("access_token");
+          setToken(null);
+          setUser(null);
+        }
+      });
+
+    return () => {
+      annule = true;
+    };
+  }, [token]);
+
   async function login(data: UserLogin): Promise<void> {
     const response = await http.post<Token>("/auth/login", data);
     localStorage.setItem("access_token", response.access_token);
     setToken(response.access_token);
-
-    const me = await http.get<UserRead>("/auth/me");
-    setUser(me);
   }
 
   async function register(data: UserCreate): Promise<void> {

@@ -3,12 +3,13 @@ import { Link } from "react-router-dom";
 import { http } from "../services/http";
 import useDebounce from "../hooks/useDebounce";
 import type { ItemList } from "../types/api";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 const CATEGORIES = ["Entrées", "Plats", "Desserts", "Boissons"];
 
 function ItemsPage() {
   const [recherche, setRecherche] = useState<string>("");
-  const [categorie, setCategorie] = useState<string>("");
+  const [categorie, setCategorie] = useLocalStorage<string>("filtre_categorie", "");
   const [page, setPage] = useState<number>(1);
   const [data, setData] = useState<ItemList | null>(null);
   const [chargement, setChargement] = useState<boolean>(true);

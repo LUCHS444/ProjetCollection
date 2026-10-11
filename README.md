@@ -1,110 +1,151 @@
-# Ma Collection — Cuisine & Recettes
+# Ma Collection : Cuisine & Recettes
 
-Application complète (API + Web) permettant de parcourir un catalogue de recettes de cuisine et de gérer sa collection personnelle (statut, note, commentaire).
+Un site de recettes : on parcourt un catalogue de 40 recettes, on se crée un compte, et on range ses recettes dans sa collection personnelle (à découvrir, en cours, terminé, avec une note).
 
-## Stack technique
-- **Backend** : Python, FastAPI, SQLModel, PostgreSQL (asyncpg), JWT (bcrypt)
-- **Frontend** : React 18, TypeScript (mode strict), Vite
+Ce guide est écrit pour **Windows** et pour quelqu'un qui n'a jamais utilisé de terminal. Comptez environ 20 minutes, téléchargements compris.
 
-## Prérequis
-- Python 3.10 à 3.12 (développé et testé avec 3.10)
-- Node.js 18 ou plus (version LTS)
-- PostgreSQL 14 ou plus
+## À savoir avant de commencer
 
-## 1. Base de données PostgreSQL
+- Un **terminal** est une fenêtre noire dans laquelle on tape des commandes. Ici, vous n'aurez rien à inventer : il suffit de **copier-coller** les blocs gris, un par un.
+- Il faudra **deux fenêtres noires ouvertes en même temps** : une pour l'API (le « cerveau » du site) et une pour le site lui-même. Ne les fermez pas tant que vous utilisez le site.
 
-### Windows
-1. Installez PostgreSQL depuis https://www.postgresql.org/download/windows/ et notez le mot de passe choisi pour le compte `postgres`.
-2. Lancez **SQL Shell (psql)** depuis le menu Démarrer. Appuyez sur Entrée pour accepter les valeurs par défaut (serveur, base, port, utilisateur), puis saisissez le mot de passe.
+## Étape 1 : installer 3 programmes
 
-### Linux / macOS
-```bash
-sudo -u postgres psql
+Téléchargez, lancez, puis cliquez sur « Suivant » partout, sauf pour les points signalés.
+
+1. **Python**, version 3.11 ou 3.12 : https://www.python.org/downloads/windows/
+   Sur la première fenêtre d'installation, **cochez la case « Add python.exe to PATH »** (en bas), puis « Install Now ».
+2. **Node.js**, version « LTS » (le bouton vert) : https://nodejs.org
+3. **PostgreSQL** (la base de données) : https://www.postgresql.org/download/windows/
+   Pendant l'installation, on vous demande un **mot de passe** pour le compte « postgres ». Choisissez-en un et **notez-le**. Laissez le port `5432`. À la fin, vous pouvez décocher « Stack Builder ».
+
+## Étape 2 : décompresser le projet
+
+Clic droit sur le fichier `.zip` → **Extraire tout…** → **Extraire**.
+Ouvrez le dossier obtenu : vous devez voir deux dossiers, `api` et `web`.
+
+## Étape 3 : créer la base de données
+
+1. Appuyez sur la touche Windows, tapez **SQL Shell**, ouvrez **SQL Shell (psql)**.
+2. La fenêtre pose quatre questions (Server, Database, Port, Username) : appuyez sur **Entrée** quatre fois.
+3. Elle demande le mot de passe de l'étape 1 : tapez-le, puis Entrée. Rien ne s'affiche pendant la frappe, c'est normal.
+4. Quand vous voyez `postgres=#`, copiez ces 3 lignes, faites un **clic droit** dans la fenêtre pour coller, puis Entrée :
+
 ```
-(le service PostgreSQL doit être démarré)
-
-### Création de la base (toutes plateformes)
-Dans l'invite `psql`, tapez :
-
-```sql
-CREATE USER ma_collection_user WITH PASSWORD 'votre_mot_de_passe';
+CREATE USER ma_collection_user WITH PASSWORD 'collection2026';
 CREATE DATABASE ma_collection OWNER ma_collection_user;
 \q
 ```
 
-Choisissez un mot de passe composé uniquement de lettres et de chiffres : certains caractères (`#`, `@`, `:`, `/`) cassent l'URL de connexion.
+Vous devez voir `CREATE ROLE` puis `CREATE DATABASE`. La fenêtre se ferme toute seule.
 
-## 2. Backend (API)
+## Étape 4 : lancer l'API (fenêtre noire n°1)
 
-### Windows (PowerShell)
-```powershell
-cd api
+1. Dans l'explorateur de fichiers, ouvrez le dossier **`api`**.
+2. Cliquez dans la **barre d'adresse** en haut (celle qui affiche le chemin du dossier), tapez `cmd` et appuyez sur Entrée. Une fenêtre noire s'ouvre.
+3. Copiez-collez ces commandes **une par une**, en attendant la fin de chacune (la deuxième dure 1 à 3 minutes) :
+
+```
 py -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+```
+```
+.\.venv\Scripts\python -m pip install -r requirements.txt
+```
+```
 copy .env.example .env
 ```
-Si `py` n'est pas reconnu, utilisez `python`. Si PowerShell refuse d'activer l'environnement, ouvrez plutôt l'invite de commandes (`cmd`) et remplacez la troisième ligne par `.venv\Scripts\activate.bat`.
-
-### Linux / macOS
-```bash
-cd api
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
+```
+notepad .env
 ```
 
-### Configuration
-Éditez le fichier `api/.env` (`notepad .env` sous Windows) :
-- `DATABASE_URL=postgresql+asyncpg://ma_collection_user:VOTRE_MOT_DE_PASSE@localhost:5432/ma_collection`
-- `JWT_SECRET_KEY` : générez une clé avec la commande ci-dessous et collez le résultat
+Si Windows répond que `py` n'est pas reconnu, remplacez `py` par `python`.
 
-```bash
-python -c "import secrets; print(secrets.token_hex(32))"
+4. Le Bloc-notes s'ouvre. **Supprimez tout son contenu** (Ctrl+A puis Suppr) et collez ceci :
+
+```
+DATABASE_URL=postgresql+asyncpg://ma_collection_user:collection2026@localhost:5432/ma_collection
+JWT_SECRET_KEY=COLLEZ_ICI_UNE_CLE
+JWT_ALGORITHM=HS256
+JWT_EXPIRE_MINUTES=30
+CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
-### Peuplement et lancement
-Peuplez le catalogue (40 recettes, relançable sans créer de doublons) :
+Remplacez `COLLEZ_ICI_UNE_CLE` par une longue suite de lettres et de chiffres de votre choix (au moins 32 caractères, par exemple `k8Zp2xQv7LmN4rTa9WcE1yUb5HgD3sJf`). Enregistrez avec Ctrl+S et fermez le Bloc-notes.
 
-```bash
-python -m app.seed
+5. De retour dans la fenêtre noire, remplissez la base avec les 40 recettes :
+
+```
+.\.venv\Scripts\python -m app.seed
 ```
 
-Démarrez l'API (laissez ce terminal ouvert) :
+Vous devez voir : `40 recette(s) ajoutée(s)`.
 
-```bash
-python -m uvicorn app.main:app --reload
+6. Démarrez l'API :
+
+```
+.\.venv\Scripts\python -m uvicorn app.main:app --reload
 ```
 
-L'API est disponible sur http://localhost:8000, documentation interactive sur http://localhost:8000/docs.
+Vous devez voir `Application startup complete`. **Laissez cette fenêtre ouverte** et ne tapez plus rien dedans.
 
-## 3. Frontend (Web)
+## Étape 5 : lancer le site (fenêtre noire n°2)
 
-Dans un **second terminal** :
+1. Dans l'explorateur, ouvrez le dossier **`web`**.
+2. Comme à l'étape 4, cliquez dans la barre d'adresse, tapez `cmd`, Entrée.
+3. Copiez-collez, une commande à la fois (la première dure 1 à 2 minutes) :
 
-```bash
-cd web
+```
 npm install
+```
+```
 npm run dev
 ```
 
-Le site est disponible sur http://localhost:5173. L'API doit tourner en même temps.
+Vous devez voir une ligne `Local: http://localhost:5173/`. **Laissez aussi cette fenêtre ouverte.**
 
-## Utilisation
-1. Ouvrez http://localhost:5173
-2. Créez un compte via « Connexion » puis « Pas encore de compte ? S'inscrire »
-3. Parcourez le catalogue, consultez une fiche recette, ajoutez-la à votre collection
-4. Gérez votre collection (statut, note, suppression) et consultez vos statistiques
+## Étape 6 : utiliser le site
 
-## Dépannage
-- **Erreur d'authentification PostgreSQL** : vérifiez le mot de passe dans `DATABASE_URL` (lettres et chiffres uniquement) et que PostgreSQL est démarré.
-- **Catalogue vide ou « Impossible de charger »** : vérifiez que l'API tourne, et que `python -m app.seed` a été exécuté.
-- **Port 8000 ou 5173 déjà utilisé** : fermez l'ancien serveur, ou arrêtez-le avec Ctrl+C.
+Ouvrez votre navigateur à l'adresse **http://localhost:5173**
 
-## Sécurité
-- Mots de passe hachés avec bcrypt (jamais stockés ni exposés en clair)
-- Authentification par JWT (expiration 30 min)
-- CORS restreint à une liste blanche d'origines
-- Toute action sur la collection est vérifiée côté serveur (un utilisateur ne peut accéder qu'à ses propres entrées)
-- Aucun secret dans le dépôt : le fichier `.env` est ignoré par Git
+1. Cliquez sur **Connexion**, puis sur **Pas encore de compte ? S'inscrire**, et créez votre compte.
+2. Parcourez le catalogue (recherche, catégories), ouvrez une recette et ajoutez-la à votre collection.
+3. Dans **Ma collection**, changez le statut, donnez une note ou supprimez. La page **Statistiques** résume le tout.
+
+La documentation technique de l'API est visible sur http://localhost:8000/docs
+
+## Arrêter, puis relancer un autre jour
+
+- **Arrêter** : dans chaque fenêtre noire, appuyez sur **Ctrl+C**, puis fermez-la.
+- **Relancer** : l'installation n'est pas à refaire. PostgreSQL redémarre tout seul avec Windows. Ouvrez de nouveau une fenêtre noire dans `api` et tapez `.\.venv\Scripts\python -m uvicorn app.main:app --reload`, puis une autre dans `web` avec `npm run dev`.
+
+## Un problème ?
+
+| Message ou symptôme | Que faire |
+|---|---|
+| `password authentication failed` | Le mot de passe du fichier `.env` n'est pas celui de l'étape 3. Rouvrez-le avec `notepad .env` : il doit contenir `collection2026` dans la ligne `DATABASE_URL`. |
+| `connection refused` dans la fenêtre de l'API | PostgreSQL n'est pas démarré. Touche Windows, tapez `services`, ouvrez « Services », cherchez `postgresql-x64-…`, clic droit puis **Démarrer**. |
+| Le site affiche « Impossible de charger le catalogue » | L'API n'est pas lancée (étape 4, point 6), ou la base n'a pas été remplie (point 5). |
+| `py` ou `npm` « n'est pas reconnu » | Fermez la fenêtre noire et ouvrez-en une nouvelle (les installations ne sont prises en compte que dans les nouvelles fenêtres). Pour `py`, essayez `python`. |
+| `address already in use` | Une ancienne fenêtre fait encore tourner le programme : fermez-la. |
+
+## Linux / macOS (pour les habitués du terminal)
+
+```bash
+cd api
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+cp .env.example .env        # puis éditer comme à l'étape 4
+.venv/bin/python -m app.seed
+.venv/bin/python -m uvicorn app.main:app --reload
+```
+```bash
+cd web && npm install && npm run dev
+```
+
+La base se crée avec `sudo -u postgres psql`, puis les mêmes 3 lignes SQL que l'étape 3.
+
+## Informations techniques
+
+- **Backend** : Python, FastAPI (asynchrone), SQLModel, PostgreSQL, authentification JWT, mots de passe hachés avec bcrypt
+- **Frontend** : React 18, TypeScript en mode strict, Vite, React Router
+- **Sécurité** : secrets hors du dépôt Git (fichier `.env` ignoré), CORS restreint à une liste blanche, vérification côté serveur que chaque utilisateur n'accède qu'à ses propres données

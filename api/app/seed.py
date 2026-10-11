@@ -96,10 +96,10 @@ IMAGES = {
     "Cheesecake New-York": "https://imgs.search.brave.com/wn2eKCI9fwHi08TS9uTfJQu4_LtAOyFWpkRvVQJamBU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pMC53/cC5jb20vd3d3LnJl/Y2V0dGVzZGVjdWlz/aW5lZHVtb25kZS5j/b20vd3AtY29udGVu/dC91cGxvYWRzLzIw/MTYvMDEvTlktQ2hl/ZXNlY2FrZS1wYXIt/RmFubnkuanBnP3Jl/c2l6ZT01NzAsNDEz",
     "Île flottante": "https://imgs.search.brave.com/kvBQEOY0_OvliLcRgwCD4Tznn99sgGGAkTDceUGUKs8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/anVsaWVhbmRyaWV1/LmNvbS9tZWRpYS9j/YWNoZS93ZWJfcmVj/aXBlX2RldGFpbC91/cGxvYWRzL3JlY2V0/dGVzL2Rlc3NlcnQv/aWxlLWZsb3R0YW50/ZS5qcGc",
     "Mojito sans alcool": "https://imgs.search.brave.com/bZymxZ_85YhKQ2r4h5ajNxzMRLbv2romEsfqoSRArxY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWct/My5qb3VybmFsZGVz/ZmVtbWVzLmZyL2ND/ZDNWN25XaTFqZHB2/aVJGU3h3QVptd2JM/ST0vNzUweDUwMC8y/NDcxNWZhYmRlMmQ0/YTZmYjI1NDBkZTlm/NmU1MmQ5MS9jY21j/bXMtamRmLzM5NzA1/NzU1LmpwZw",
-    "Smoothie mangue passion": "",
-    "Chocolat chaud maison": "",
-    "Thé glacé pêche": "",
-    "Limonade maison": "",
+    "Smoothie mangue passion": "https://imgs.search.brave.com/tqmFuvpP92R8ZTXnySq2qG12d8CtjsFwzSKNsK2OFU4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/Y3Vpc2luZWF6LmNv/bS82NjB4NDk1LzIw/MTMvMTIvMjAvaTkx/MDkwLXNtb290aGll/LW1hbmd1ZS1wYXNz/aW9uLmpwZWc",
+    "Chocolat chaud maison": "https://imgs.search.brave.com/qhmbVhjaLP11bjQfyast8Z1SrY-iRvmQnPslqma3ZEg/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/cmVjZXR0ZXMtY2hv/Y29sYXRzLmNvbS9o/YnN0cmcvMjAyNS8x/Mi9DaG9jb2xhdC1j/aGF1ZC1tYWlzb24u/d2VicA",
+    "Thé glacé pêche": "https://imgs.search.brave.com/pptn3b2n_l_hpoqig8fovU11T6KrCYrrMiIEGSg1Edg/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNDgz/NzU5ODY2L2ZyL3Bo/b3RvL3RoJUMzJUE5/LWdsYWMlQzMlQTkt/YXZlYy1kZXMtbSVD/MyVCQnJlcy1wZWFj/aGVzLXN1ci1mb25k/LXJ1c3RpcXVlLmpw/Zz9zPTYxMng2MTIm/dz0wJms9MjAmYz1V/dnI5VjIwcVU1ZFph/Wml6clBmWFJlbFlD/Qi1CcWZRTWJlRnVC/RjRPVFVvPQ",
+    "Limonade maison": "https://imgs.search.brave.com/hnaXC6nj50h4iM4br20Askp83C6LOFTPkmei3x_H_ps/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90b3Bh/c3NpZXR0ZS5jb20v/YXNzZXRzL2ltYWdl/cy8xNzQ5NjQ0NTI5/MTM3LXk1d2c5bGNu/LndlYnA",
 }
 
 def slugify(texte: str) -> str:
